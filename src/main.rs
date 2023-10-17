@@ -260,7 +260,10 @@ async fn main() {
         .await
         .unwrap();
 
-    fs::create_dir("data").await.unwrap();
+    match fs::create_dir("data").await {
+        Ok(a) => {},
+        Err(a) => println!("Error creating data directory: {:?}", a)
+    };
 
     sqlx::query(
         "CREATE TABLE IF NOT EXISTS users (
