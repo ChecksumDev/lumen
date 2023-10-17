@@ -87,6 +87,13 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
     .await
     .unwrap();
 
+    sqlx::query("UPDATE users SET used = used + $1 WHERE id = $2")
+        .bind(file_size)
+        .bind(user.id)
+        .execute(&data.pool)
+        .await
+        .unwrap();
+
     HttpResponse::Ok().json(UploadResponse {
         id: String::from(&uuid),
         ext: String::from(file_extension),
