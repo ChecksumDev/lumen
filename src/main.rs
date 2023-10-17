@@ -11,9 +11,11 @@ use sqlx::{
     sqlite::{SqliteConnectOptions, SqlitePoolOptions},
     Pool, Sqlite,
 };
+use storage::Storage;
 
 struct AppData {
     pool: Pool<Sqlite>,
+    storage: Storage,
 }
 
 #[tokio::main]
@@ -30,8 +32,10 @@ async fn main() -> Result<()> {
         .await
         .unwrap();
 
+    let storage = Storage::new(String::from("data")).await;
+
     sqlx::migrate!().run(&pool).await.unwrap();
-    let data = Data::new(AppData { pool });
+    let data = Data::new(AppData { pool, storage });
 
     println!("Lumen is running on {}", std::env::var("HOST").unwrap());
     HttpServer::new(move || {

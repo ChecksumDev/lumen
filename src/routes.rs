@@ -14,7 +14,6 @@ use uuid::Uuid;
 use crate::{
     encryption::Encryption,
     models::{File, User},
-    storage::Storage,
     AppData,
 };
 
@@ -70,8 +69,7 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
     let encoded_key = general_purpose::URL_SAFE_NO_PAD.encode(encryption.key);
     let encoded_nonce = general_purpose::URL_SAFE_NO_PAD.encode(encryption.nonce);
 
-    let storage = Storage::new(String::from("data")).await;
-    storage
+    data.storage
         .save(String::from(&uuid), &encrypted_bytes)
         .await
         .unwrap();
@@ -136,8 +134,7 @@ async fn download(
             .unwrap(),
     };
 
-    let storage = Storage::new(String::from("data")).await;
-    let encrypted_bytes = storage.load(id).await.unwrap();
+    let encrypted_bytes = data.storage.load(id).await.unwrap();
 
     let bytes = encryption.decrypt(&encrypted_bytes);
 
