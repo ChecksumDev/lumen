@@ -1,24 +1,22 @@
-// encryption module for encrypting and decrypting files using AES-256-GCM-SIV
-
 use aes_gcm_siv::{
-    aead::{generic_array::GenericArray, rand_core::RngCore, Aead, KeyInit, OsRng},
-    Aes256GcmSiv, Nonce,
+    aead::{generic_array::GenericArray, Aead, KeyInit, OsRng},
+    AeadCore, Aes256GcmSiv, Nonce,
 };
 
 pub struct Encryption {
-    pub(crate) key: Vec<u8>,   // pub(crate) key
-    pub(crate) nonce: Vec<u8>, // pub(crate) nonce
+    pub(crate) key: Vec<u8>,
+    pub(crate) nonce: Vec<u8>,
 }
 
 impl Default for Encryption {
     fn default() -> Self {
-        let mut key = vec![0u8; 32];
-        let mut nonce = vec![0u8; 12]; 
+        let key = Aes256GcmSiv::generate_key(&mut OsRng);
+        let nonce = Aes256GcmSiv::generate_nonce(&mut OsRng);
 
-        OsRng.fill_bytes(&mut key);
-        OsRng.fill_bytes(&mut nonce);
-
-        Encryption { key, nonce }
+        Encryption {
+            key: key.to_vec(),
+            nonce: nonce.to_vec(),
+        }
     }
 }
 
