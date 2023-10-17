@@ -17,7 +17,8 @@ FROM alpine:latest as runtime
 RUN apk add --no-cache libgcc
 
 # create a non-root user
-RUN addgroup -S lumen && adduser -S lumen -G lumen
+RUN addgroup -g 1500 lumen && \
+    adduser -H -D -u 1500 -G lumen lumen
 
 # copy the binary from the builder
 WORKDIR /app
