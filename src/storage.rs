@@ -9,9 +9,11 @@ pub struct Storage {
 }
 
 impl Storage {
-    pub async fn new(path: String) -> Storage {
-        tokio::fs::create_dir_all(&path).await.ok();
-        Storage { path }
+    pub async fn new(path: impl Into<String>) -> Result<Self> {
+        let path = path.into();
+
+        tokio::fs::create_dir_all(&path).await?;
+        Ok(Storage { path })
     }
 
     pub async fn save(&self, id: impl Into<String>, bytes: &[u8]) -> Result<()> {

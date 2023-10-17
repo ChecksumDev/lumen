@@ -22,18 +22,18 @@ struct AppData {
 async fn main() -> Result<()> {
     dotenv().ok();
 
-    // todo: support other databases (mysql, postgresql, etc)
+    let storage = Storage::new("data/uploads").await?;
+
     let pool = SqlitePoolOptions::new()
         .connect_with(
             SqliteConnectOptions::new()
-                .filename("lumen.db")
+                .filename("data/lumen.db")
                 .create_if_missing(true),
         )
         .await
         .unwrap();
 
-    let storage = Storage::new(String::from("data")).await;
-
+    // todo: support other databases (mysql, postgresql, etc)
     sqlx::migrate!().run(&pool).await.unwrap();
     let data = Data::new(AppData { pool, storage });
 
