@@ -30,14 +30,20 @@ async fn main() -> Result<()> {
                 .filename("data/lumen.db")
                 .create_if_missing(true),
         )
-        .await
-        .unwrap();
+        .await?;
 
     // todo: support other databases (mysql, postgresql, etc)
-    sqlx::migrate!().run(&pool).await.unwrap();
+    sqlx::migrate!().run(&pool).await?;
     let data = Data::new(AppData { pool, storage });
+    let host = match std::env::var("HOST") {
+        Ok(host) => host,
+        Err(_) => {
+            println!("The HOST environment variable is not set, defaulting to 127.0.0.1:8080");
+            "127.0.0.1:8080".to_string()
+        }
+    };
 
-    println!("Lumen is running on {}", std::env::var("HOST").unwrap());
+    println!("Lumen is running on {}", host);
     HttpServer::new(move || {
         App::new()
             .app_data(data.clone())
@@ -46,7 +52,7 @@ async fn main() -> Result<()> {
             .service(upload)
             .service(download)
     })
-    .bind(std::env::var("HOST")?)?
+    .bind(host)?
     .run()
     .await?;
 
