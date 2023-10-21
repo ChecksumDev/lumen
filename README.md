@@ -32,7 +32,9 @@ Make sure to update the values in the configuration file to match your Lumen ins
 
 ## Benchmarks 📊
 
-These benchmarks were performed on a Ryzen 9 3900X with 32GB of RAM. Feel free to run the benchmarks yourself by running `cargo bench` in the project directory.
+These benchmarks were performed on a Ryzen 9 3900X with 32GB of RAM. Feel free to run the benchmarks yourself by running `cargo bench` in the project directory with a release server running.
+
+> **WARNING:** The benchmark will create many 1MB files, and will **DELETE ALL** uploads by the test user when it is finished.
 
 ![Benchmark](assets/benchmarks.svg)
 
