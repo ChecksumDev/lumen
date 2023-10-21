@@ -8,26 +8,21 @@ All uploads are encrypted with **AES-256-GCM-SIV** and only the uploader can dec
 
 > **Note:** Lumen is currently in development and may not be stable. Use at your own risk.
 
-To install Lumen, follow these steps:
+### Building from source
 
-1. Clone the repository:
-
-   ````bash
+```bash
+   # Clone the repository
    git clone https://github.com/checksumdev/lumen.git
    cd lumen
-   ```
 
-2. Build the project:
-
-   ````bash
+   # Build the project
    cargo build --release
-   ```
 
-3. Run Lumen:
-
-   ````bash
+   # Run Lumen 🌄 (after you configured the .env file)
    ./target/release/lumen # or ./target/release/lumen.exe on Windows
-   ```
+
+   # Lumen is now running on http://localhost:8080
+```
 
 ## Usage 📝
 
