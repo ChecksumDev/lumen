@@ -1,14 +1,15 @@
 {
-    "Version": "15.0.0",
-    "Name": "Lumen",
-    "DestinationType": "ImageUploader, TextUploader, FileUploader",
-    "RequestMethod": "POST",
-    "RequestURL": "http://localhost:8080/upload",
-    "Headers": {
-        "x-api-key": "API_KEY_HERE",
-        "x-file-name": "{filename}"
+    "version": "15.0.0",
+    "name": "Lumen",
+    "destinationType": "ImageUploader, TextUploader, FileUploader",
+    "requestMethod": "POST",
+    "requestUrl": "http://localhost:8080/upload",
+    "headers": {
+        "x_api_key": "API_KEY_HERE",
+        "x_file_name": "{filename}"
     },
-    "Body": "Binary",
-    "URL": "http://localhost:8080/{json:id}.{json:ext}?key={json:key}&nonce={json:nonce}",
-    "ErrorMessage": "{response}"
+    "body": "Binary",
+    "url": "http://localhost:8080/{json:id}.{json:ext}?key={json:key}&nonce={json:nonce}",
+    "deletionUrl": "http://localhost:8080/{json:id}.{json:ext}/delete?key={json:key}&nonce={json:nonce}&api_key=API_KEY_HERE",
+    "errorMessage": "{response}"
 }
