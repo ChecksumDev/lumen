@@ -27,4 +27,9 @@ RUN chown -R lumen:lumen /app && chmod +x lumen
 
 USER lumen
 
+ENV BIND=0.0.0.0:8080
+ENV PUBLIC_URL=http://localhost:8080
+ENV RUST_BACKTRACE=1
+ENV RUST_LOG=info
+
 ENTRYPOINT ["./lumen"]
