@@ -1,34 +1,46 @@
 # Lumen 🌄
 
-Lumen is an **astronomically fast** ShareX uploader written in Rust using the [Actix Web](https://github.com/actix/actix-web) framework. Lumen is designed to be **lightweight** and **secure**.
+Lumen is an **astronomically fast** ShareX uploader written in Rust using the [Actix Web](https://github.com/actix/actix-web) framework. It is designed to be **lightweight** and **secure**, providing a self-hosted solution for file uploads.
 
-All uploads are encrypted with **AES-256-GCM-SIV** and only the uploader can decrypt the files. Lumen is designed to be self-hosted and is easy to deploy.
+All uploads are encrypted with **AES-256-GCM-SIV** and only the uploader can decrypt the files.
 
 ## Installation 🚀
 
 > **Note:** Lumen is currently in development and may not be stable. Use at your own risk.
 
-```bash
-# Clone the repository
-git clone https://github.com/checksumdev/lumen.git
-cd lumen
+To install Lumen, follow these steps:
 
-# Build the project
-cargo build --release
+1. Clone the repository:
 
-# Run Lumen! 🎉
-./target/release/lumen # or ./target/release/lumen.exe on Windows
-```
+   ````bash
+   git clone https://github.com/checksumdev/lumen.git
+   cd lumen
+   ```
+
+2. Build the project:
+
+   ````bash
+   cargo build --release
+   ```
+
+3. Run Lumen:
+
+   ````bash
+   ./target/release/lumen # or ./target/release/lumen.exe on Windows
+   ```
 
 ## Usage 📝
 
-An example ShareX configuration is [provided in the examples folder](examples/Lumen.sxcu). You can import this configuration by downloading the file and opening it.
+To use Lumen, you need to configure ShareX. An example ShareX configuration file is provided in the examples folder: [Lumen.sxcu](examples/Lumen.sxcu). Download the file and open it.
 
-You will need to update some of the values in the configuration file to match your Lumen installation.
+Make sure to update the values in the configuration file to match your Lumen installation.
+
+## Benchmarks 📊
+
 
 ## Contributing 🤝
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change. Please use the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification for commit messages.
+We welcome pull requests from the community. If you have any major changes, please open an issue first to discuss them. When making commits, please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
 
 ## License 📜
 
