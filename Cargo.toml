@@ -6,6 +6,13 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[profile.release]
+opt-level = 3
+debug = false
+lto = true
+debug-assertions = false
+codegen-units = 1
+
 [dependencies]
 actix-web = { version = "4.4.0", features = ["rustls"] }
 aes-gcm-siv = "0.11.1"
@@ -24,3 +31,11 @@ sha3 = "0.10.8"
 argon2 = "0.5.2"
 dotenvy = "0.15.7"
 anyhow = "1.0.75"
+
+[dev-dependencies]
+criterion = { version = "0.4", features = ["html_reports"] }
+ureq = "2.8.0"
+
+[[bench]]
+name = "upload"
+harness = false
