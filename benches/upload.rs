@@ -6,8 +6,8 @@ use ureq::Agent;
 fn upload(agent: &Agent, api_key: &str, public_url: &str) {
     agent
         .post(&format!("{}/upload", public_url))
-        .set("x_api_key", api_key)
-        .set("x_file_name", "test.png")
+        .set("x-api-key", api_key)
+        .set("x-file-name", "test.png")
         .set("content-type", "image/png")
         .send_bytes(&vec![0; 1024 * 1024])
         .ok();
@@ -26,7 +26,7 @@ fn criterion_benchmark(c: &mut Criterion) {
 
     agent
         .post(&format!("{}/purge", public_url))
-        .set("x_api_key", &api_key)
+        .set("x-api-key", &api_key)
         .call()
         .unwrap();
 }

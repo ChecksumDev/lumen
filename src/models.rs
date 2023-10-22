@@ -19,7 +19,9 @@ pub struct SXConfig {
 
 #[derive(Serialize, Deserialize)]
 pub struct SXHeaders {
+    #[serde(rename = "x-api-key")]
     x_api_key: String,
+    #[serde(rename = "x-file-name")]
     x_file_name: String,
 }
 

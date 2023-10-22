@@ -30,7 +30,7 @@ struct UploadResponse {
 
 #[post("/upload")]
 async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Responder {
-    let api_key = req.headers().get("x_api_key");
+    let api_key = req.headers().get("x-api-key");
 
     if api_key.is_none() {
         return HttpResponse::Unauthorized().body("Invalid API key");
@@ -52,7 +52,7 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
         return HttpResponse::PayloadTooLarge().body("Quota exceeded");
     }
 
-    let file_name = req.headers().get("x_file_name");
+    let file_name = req.headers().get("x-file-name");
     if file_name.is_none() {
         return HttpResponse::BadRequest().body("Missing file name");
     }
@@ -222,7 +222,7 @@ async fn delete(
 
 #[post("/purge")]
 async fn purge(info: HttpRequest, data: Data<AppData>) -> impl Responder {
-    let api_key = info.headers().get("x_api_key");
+    let api_key = info.headers().get("x-api-key");
 
     if api_key.is_none() {
         return HttpResponse::Unauthorized().body("Invalid API key");

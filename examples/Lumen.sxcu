@@ -5,8 +5,8 @@
     "requestMethod": "POST",
     "requestUrl": "http://localhost:8080/upload",
     "headers": {
-        "x_api_key": "API_KEY_HERE",
-        "x_file_name": "{filename}"
+        "x-api-key": "API_KEY_HERE",
+        "x-file-name": "{filename}"
     },
     "body": "Binary",
     "url": "http://localhost:8080/{json:id}.{json:ext}?key={json:key}&nonce={json:nonce}",
