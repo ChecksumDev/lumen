@@ -67,6 +67,7 @@ pub struct File {
     pub r#type: String,
     pub hash: String,
     pub size: i64,
+    pub encrypted: bool,
     pub user_id: i64,
     pub created_at: NaiveDateTime,
 }

@@ -1,5 +1,7 @@
 use actix_web::{
-    get, post,
+    get,
+    http::header::HeaderValue,
+    post,
     web::{self, Bytes, Data},
     HttpRequest, HttpResponse, Responder,
 };
@@ -47,6 +49,11 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
     }
 
     let user = user.unwrap();
+    let encrypted = match req.headers().get("x-encrypted") {
+        Some(header) => header == HeaderValue::from_static("true"),
+        None => true,
+    };
+
     let file_size = bytes.len() as i64;
     if user.used + file_size > user.quota {
         return HttpResponse::PayloadTooLarge().body("Quota exceeded");
@@ -70,27 +77,28 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
     let file_extension = file_type.split("/").last().unwrap();
     let file_hash = format!("{:x}", Sha3_512::digest(&bytes));
 
-    let cipher = Cipher::default();
-    let encrypted_bytes = cipher.encrypt(&bytes);
-    let encoded = cipher.to_base64();
+    let file_query = sqlx::query("INSERT INTO files (uuid, name, type, hash, size, user_id, encrypted) VALUES ($1, $2, $3, $4, $5, $6, $7)").bind(&uuid).bind(file_name).bind(file_type).bind(&file_hash).bind(file_size).bind(user.id);
+    let (key, nonce) = if encrypted {
+        let cipher = Cipher::default();
+        let encrypted_bytes = cipher.encrypt(&bytes);
+        let encoded = cipher.to_base64();
 
-    data.storage
-        .save(String::from(&uuid), &encrypted_bytes)
-        .await
-        .unwrap();
+        data.storage
+            .save(String::from(&uuid), &encrypted_bytes)
+            .await
+            .unwrap();
 
-    sqlx::query(
-        "INSERT INTO files (uuid, name, type, hash, size, user_id) VALUES ($1, $2, $3, $4, $5, $6)",
-    )
-    .bind(&uuid)
-    .bind(file_name)
-    .bind(file_type)
-    .bind(&file_hash)
-    .bind(file_size)
-    .bind(user.id)
-    .execute(&data.pool)
-    .await
-    .unwrap();
+        file_query.bind(true).execute(&data.pool).await.unwrap();
+        (encoded.0, encoded.1)
+    } else {
+        data.storage
+            .save(String::from(&uuid), &bytes)
+            .await
+            .unwrap();
+
+        file_query.bind(false).execute(&data.pool).await.unwrap();
+        (String::new(), String::new())
+    };
 
     sqlx::query("UPDATE users SET used = used + $1 WHERE id = $2")
         .bind(file_size)
@@ -102,8 +110,8 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
     HttpResponse::Ok().json(UploadResponse {
         id: String::from(&uuid),
         ext: String::from(file_extension),
-        key: encoded.0,
-        nonce: encoded.1,
+        key,
+        nonce,
     })
 }
 
@@ -137,9 +145,17 @@ async fn download(
 
     let file = file.unwrap();
 
-    let cipher = Cipher::from_base64(&info.key, &info.nonce);
-    let encrypted_bytes = data.storage.load(id).await.unwrap();
-    let bytes = cipher.decrypt(&encrypted_bytes);
+    if file.encrypted && (info.key.is_empty() || info.nonce.is_empty()) {
+        return HttpResponse::BadRequest().body("Missing decryption key or nonce");
+    }
+
+    let bytes = if file.encrypted {
+        let cipher = Cipher::from_base64(&info.key, &info.nonce);
+        let encrypted_bytes = data.storage.load(id).await.unwrap();
+        cipher.decrypt(&encrypted_bytes)
+    } else {
+        data.storage.load(id).await.unwrap()
+    };
 
     HttpResponse::Ok()
         .append_header(("content-disposition", format!("filename=\"{}\"", file.name)))
@@ -194,9 +210,17 @@ async fn delete(
         return HttpResponse::Unauthorized().body("Invalid API key");
     }
 
-    let cipher = Cipher::from_base64(&info.key, &info.nonce);
-    let encrypted_bytes = data.storage.load(id).await.unwrap();
-    let valid = cipher.verify(&encrypted_bytes);
+    if file.encrypted && (info.key.is_empty() || info.nonce.is_empty()) {
+        return HttpResponse::BadRequest().body("Missing decryption key or nonce");
+    }
+
+    let valid = if file.encrypted {
+        let cipher = Cipher::from_base64(&info.key, &info.nonce);
+        let encrypted_bytes = data.storage.load(id).await.unwrap();
+        cipher.verify(&encrypted_bytes)
+    } else {
+        true
+    };
 
     if !valid {
         return HttpResponse::Unauthorized().body("Invalid decryption key or nonce");

@@ -15,7 +15,7 @@ use sqlx::{
 };
 use storage::Storage;
 
-use crate::routes::{file::file_routes, user::user_routes, gen::gen_routes};
+use crate::routes::{file::file_routes, gen::gen_routes, user::user_routes};
 
 struct ConfigCache {
     public_url: String,
@@ -46,7 +46,11 @@ async fn main() -> Result<()> {
 
     // todo: support other databases (mysql, postgresql, etc)
     sqlx::migrate!().run(&pool).await?;
-    let data = Data::new(AppData { pool, config, storage });
+    let data = Data::new(AppData {
+        pool,
+        config,
+        storage,
+    });
 
     let bind = std::env::var("BIND").expect("BIND not set in environment");
     println!("Lumen is running on {}", bind);
