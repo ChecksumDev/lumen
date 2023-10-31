@@ -61,6 +61,10 @@ struct RegisterRequest {
 
 #[post("/register")]
 async fn register(info: web::Json<RegisterRequest>, data: Data<AppData>) -> impl Responder {
+    if info.username.len() < 3 || info.password.len() < 8 {
+        return HttpResponse::BadRequest().body("Invalid username or password");
+    }
+
     let salt = SaltString::generate(&mut OsRng);
     let argon2 = Argon2::default();
     let password_hash = argon2
@@ -68,17 +72,17 @@ async fn register(info: web::Json<RegisterRequest>, data: Data<AppData>) -> impl
         .unwrap()
         .to_string();
 
-    let user = sqlx::query_as::<_, User>("SELECT * FROM users WHERE username = $1")
+    let user = sqlx::query_as::<_, User>("SELECT id FROM users WHERE username = $1")
         .bind(&info.username)
-        .fetch_one(&data.pool)
+        .fetch_optional(&data.pool)
         .await;
 
-    if user.is_ok() {
-        return HttpResponse::BadRequest().body("Username already exists");
+    if let Ok(Some(_)) = user {
+        return HttpResponse::Conflict().body("Username already exists");
     }
 
     let user = sqlx::query_as::<_, User>(
-        "INSERT INTO users (uuid, username, password, key, quota, used, permissions) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+        "INSERT INTO users (uuid, username, password, key, quota, used, permissions) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, uuid, username, quota, used, permissions",
     )
     .bind(Uuid::new_v4().to_string())
     .bind(&info.username)
@@ -88,8 +92,10 @@ async fn register(info: web::Json<RegisterRequest>, data: Data<AppData>) -> impl
     .bind(0)
     .bind(0)
     .fetch_one(&data.pool)
-    .await
-    .unwrap();
+    .await;
 
-    HttpResponse::Ok().json(user)
+    match user {
+        Ok(user) => HttpResponse::Ok().json(user),
+        Err(_) => HttpResponse::InternalServerError().body("Failed to create user"),
+    }
 }
