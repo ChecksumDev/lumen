@@ -26,20 +26,20 @@ pub struct SXHeaders {
 }
 
 impl SXConfig {
-    pub fn new(host: &String, api_key: &String) -> Self {
+    #[must_use] pub fn new(host: &String, api_key: &String) -> Self {
         Self {
             version: String::from("15.0.0"),
             name: String::from("Lumen"),
             destination_type: String::from("ImageUploader, TextUploader, FileUploader"),
             request_method: String::from("POST"),
-            request_url: format!("{}/upload", host),
+            request_url: format!("{host}/upload"),
             headers: SXHeaders {
                 x_api_key: api_key.clone(),
                 x_file_name: String::from("{filename}"),
             },
             body: String::from("Binary"),
-            url: format!("{}/{{json:id}}.{{json:ext}}?key={{json:key}}&nonce={{json:nonce}}", host),
-            deletion_url: format!("{}/{{json:id}}.{{json:ext}}/delete?key={{json:key}}&nonce={{json:nonce}}&api_key={}", host, api_key),
+            url: format!("{host}/{{json:id}}.{{json:ext}}?key={{json:key}}&nonce={{json:nonce}}"),
+            deletion_url: format!("{host}/{{json:id}}.{{json:ext}}/delete?key={{json:key}}&nonce={{json:nonce}}&api_key={api_key}"),
             error_message: String::from("{response}"),
         }
     }
