@@ -14,24 +14,30 @@ pub fn gen_routes(cfg: &mut web::ServiceConfig) {
 }
 
 #[get("/")]
-async fn index(data: Data<AppData>) -> impl Responder {
+async fn index(data: Data<AppData>) -> Result<impl Responder, actix_web::Error> {
     let version = env!("CARGO_PKG_VERSION");
-    let users = sqlx::query_as::<_, User>("SELECT * FROM users")
-        .fetch_all(&data.pool)
-        .await
-        .unwrap();
 
-    let files = sqlx::query_as::<_, File>("SELECT * FROM files")
-        .fetch_all(&data.pool)
-        .await
-        .unwrap();
+    let users_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM users")
+        .fetch_one(&data.pool)
+        .await.expect("Failed to get user count");
 
-    HttpResponse::Ok().body(format!(
-        "This server is running Lumen v{}\nServing {} users and {} files",
+    let files_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM files")
+        .fetch_one(&data.pool)
+        .await.expect("Failed to get file count");
+
+    let total_size: i64 = sqlx::query_scalar("SELECT SUM(size) FROM files")
+        .fetch_one(&data.pool)
+        .await.expect("Failed to get total file size");
+
+    let response = format!(
+        "This server is running Lumen v{}\nServing {} users and {} files totaling {} MiB",
         version,
-        users.len(),
-        files.len()
-    ))
+        users_count,
+        files_count,
+        total_size / 1024 / 1024
+    );
+
+    Ok(HttpResponse::Ok().body(response))
 }
 
 #[derive(Serialize, Deserialize)]
