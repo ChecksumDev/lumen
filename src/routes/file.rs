@@ -80,21 +80,19 @@ async fn upload(bytes: Bytes, req: HttpRequest, data: Data<AppData>) -> impl Res
     let file_query = sqlx::query("INSERT INTO files (uuid, name, type, hash, size, user_id, encrypted) VALUES ($1, $2, $3, $4, $5, $6, $7)").bind(&uuid).bind(file_name).bind(file_type).bind(&file_hash).bind(file_size).bind(user.id);
     let (key, nonce) = if encrypted {
         let cipher = Cipher::default();
-        let encrypted_bytes = cipher.encrypt(&bytes);
+        let encrypted_bytes = cipher.encrypt(&bytes).expect("Failed to encrypt file");
         let encoded = cipher.to_base64();
 
         data.storage
-            .save(String::from(&uuid), &encrypted_bytes)
-            .await
-            .unwrap();
+            .save(String::from(&uuid), encrypted_bytes)
+            .await.expect("Failed to save file");
 
         file_query.bind(true).execute(&data.pool).await.unwrap();
         (encoded.0, encoded.1)
     } else {
         data.storage
-            .save(String::from(&uuid), &bytes)
-            .await
-            .unwrap();
+            .save(String::from(&uuid), bytes.to_vec())
+            .await.expect("Failed to save file");
 
         file_query.bind(false).execute(&data.pool).await.unwrap();
         (String::new(), String::new())
@@ -150,9 +148,9 @@ async fn download(
     }
 
     let bytes = if file.encrypted {
-        let cipher = Cipher::from_base64(&info.key, &info.nonce);
+        let cipher = Cipher::from_base64(&info.key, &info.nonce).expect("Failed to create cipher");
         let encrypted_bytes = data.storage.load(id).await.unwrap();
-        cipher.decrypt(&encrypted_bytes)
+        cipher.decrypt(&encrypted_bytes).expect("Failed to decrypt file")
     } else {
         data.storage.load(id).await.unwrap()
     };
@@ -215,7 +213,7 @@ async fn delete(
     }
 
     let valid = if file.encrypted {
-        let cipher = Cipher::from_base64(&info.key, &info.nonce);
+        let cipher = Cipher::from_base64(&info.key, &info.nonce).expect("Failed to create cipher");
         let encrypted_bytes = data.storage.load(id).await.unwrap();
         cipher.verify(&encrypted_bytes)
     } else {
