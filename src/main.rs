@@ -1,3 +1,6 @@
+#![forbid(unsafe_code)]
+#![warn(clippy::all, clippy::pedantic)]
+
 pub mod encryption;
 pub mod models;
 pub mod routes;
@@ -9,6 +12,7 @@ use actix_web::{
 };
 use anyhow::Result;
 use dotenvy::dotenv;
+use log::{info, warn};
 use sqlx::{
     sqlite::{SqliteConnectOptions, SqlitePoolOptions},
     Pool, Sqlite,
@@ -31,6 +35,13 @@ struct AppData {
 async fn main() -> Result<()> {
     dotenv().ok();
 
+    pretty_env_logger::init_custom_env("LUMEN_LOG");
+    info!("Starting Lumen...");
+
+    if std::env::var("LUMEN_LOG").unwrap_or_default() == "debug" {
+        warn!("Lumen is running in debug mode. This is not recommended for production use.");
+    }
+
     let storage = Storage::new("data").await?;
     let pool = SqlitePoolOptions::new()
         .connect_with(
@@ -44,16 +55,14 @@ async fn main() -> Result<()> {
         public_url: std::env::var("PUBLIC_URL").expect("PUBLIC_URL not set in environment"),
     };
 
+    info!("Running migrations...");
+
     // todo: support other databases (mysql, postgresql, etc)
     sqlx::migrate!().run(&pool).await?;
-    let data = Data::new(AppData {
-        pool,
-        config,
-        storage,
-    });
+    let data = Data::new(AppData { pool, storage, config });
 
     let bind = std::env::var("BIND").expect("BIND not set in environment");
-    println!("Lumen is running on {}", bind);
+    info!("Lumen is running on http://{}", bind);
     HttpServer::new(move || {
         App::new()
             .app_data(data.clone())
