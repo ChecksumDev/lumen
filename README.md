@@ -11,17 +11,17 @@ All uploads are encrypted with **AES-256-GCM-SIV** and only the uploader can dec
 ### Building from source
 
 ```bash
-   # Clone the repository
-   git clone https://github.com/checksumdev/lumen.git
-   cd lumen
+# Clone the repository
+git clone https://github.com/checksumdev/lumen.git
+cd lumen
 
-   # Build the project
-   cargo build --release
+# Build the project
+cargo build --release
 
-   # Run Lumen 🌄 (after you configured the .env file)
-   ./target/release/lumen # or ./target/release/lumen.exe on Windows
+# Run Lumen 🌄 (after you configured the .env file)
+./target/release/lumen # or ./target/release/lumen.exe on Windows
 
-   # Lumen is now running on http://localhost:8080
+# Lumen is now running on http://localhost:8080
 ```
 
 ## Usage 📝
@@ -41,6 +41,10 @@ These benchmarks were performed on a Ryzen 9 3900X with 32GB of RAM. Feel free t
 ## Contributing 🤝
 
 We welcome pull requests from the community. If you have any major changes, please open an issue first to discuss them. When making commits, please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+
+## Support 💬
+
+If you need help with Lumen, feel free to join our [Discord server](https://discord.gg/JcF9sTZPc4) or open an issue.
 
 ## License 📜
 
