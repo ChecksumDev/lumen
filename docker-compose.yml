@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  lumen:
+    image: ghcr.io/checksumdev/lumen:nightly
+    environment:
+      - PUBLIC_URL=https://example.com # default: http://localhost:8080
+    volumes:
+      - /opt/lumen/data:/app/data/
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
