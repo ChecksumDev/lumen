@@ -1,10 +1,10 @@
 #![forbid(unsafe_code)]
 #![warn(clippy::all, clippy::pedantic)]
 
-pub mod encryption;
-pub mod models;
-pub mod routes;
-pub mod storage;
+mod encryption;
+mod models;
+mod routes;
+mod storage;
 mod utils;
 
 use actix_web::{
