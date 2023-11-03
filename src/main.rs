@@ -5,6 +5,7 @@ pub mod encryption;
 pub mod models;
 pub mod routes;
 pub mod storage;
+mod utils;
 
 use actix_web::{
     web::{Data, PayloadConfig},
