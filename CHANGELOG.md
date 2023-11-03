@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/ChecksumDev/lumen/compare/v0.1.0...v0.1.1) (2023-11-03)
+
+
+### Bug Fixes
+
+* registration ([e421854](https://github.com/ChecksumDev/lumen/commit/e42185499d228b4d94ad5eab9e2f2b8068ef02b8))
+
 ## 0.1.0 (2023-10-31)
 
 
