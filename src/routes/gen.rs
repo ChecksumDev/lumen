@@ -1,5 +1,5 @@
 use crate::{
-    models::{File, SXConfig, User},
+    models::{SXConfig, User},
     AppData,
 };
 use actix_web::{
