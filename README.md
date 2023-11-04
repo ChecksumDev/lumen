@@ -1,5 +1,7 @@
 # Lumen 🌄
 
+![GitHub](https://img.shields.io/github/license/checksumdev/lumen) ![GitHub top language](https://img.shields.io/github/languages/top/checksumdev/lumen) ![Static Badge](https://img.shields.io/badge/forbid-unsafe_code-green) ![Discord](https://img.shields.io/discord/984852897051312159?label=Support%20Server)
+
 Lumen is an **astronomically fast** ShareX uploader written in Rust using the [Actix Web](https://github.com/actix/actix-web) framework. It is designed to be **lightweight** and **secure**, providing a self-hosted solution for file uploads.
 
 All uploads are encrypted with **AES-256-GCM-SIV** and only the uploader can decrypt the files.
@@ -40,7 +42,15 @@ These benchmarks were performed on a Ryzen 9 3900X with 32GB of RAM. Feel free t
 
 ## Contributing 🤝
 
-We welcome pull requests from the community. If you have any major changes, please open an issue first to discuss them. When making commits, please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+If you love what we're doing, **star the repository**! It helps us out a lot. If you want to contribute and have any major changes in mind, please open an issue first to discuss them. When making commits, please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) specification.
+
+<a href="https://star-history.com/#checksumdev/lumen&Date">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=checksumdev/lumen&type=Date&theme=dark" />
+    <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=checksumdev/lumen&type=Date" />
+    <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=checksumdev/lumen&type=Date" />
+  </picture>
+</a>
 
 ## Support 💬
 
