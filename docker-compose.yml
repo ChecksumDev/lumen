@@ -5,6 +5,7 @@ services:
     image: ghcr.io/checksumdev/lumen:nightly
     environment:
       - PUBLIC_URL=https://example.com # default: http://localhost:8080
+      - BIND=localhost:8080 # default localhost:8080
     volumes:
       - /opt/lumen/data:/app/data/
     ports:
