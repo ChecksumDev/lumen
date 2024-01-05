@@ -20,6 +20,9 @@ cd lumen
 # Build the project
 cargo build --release
 
+# Configure .env
+Rename .env.example to .env and change PUBLIC_URL if needed
+
 # Run Lumen 🌄 (after you configured the .env file)
 ./target/release/lumen # or ./target/release/lumen.exe on Windows
 
