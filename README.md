@@ -31,9 +31,41 @@ Rename .env.example to .env and change PUBLIC_URL if needed
 
 ## Usage 📝
 
-To use Lumen, you need to configure ShareX. An example ShareX configuration file is provided in the examples folder: [Lumen.sxcu](examples/Lumen.sxcu). Download the file and open it.
+To use Lumen you first need to create an user with POST request to `/register`. Format for the post request is `{"username": "USERNAME", "password": "PASSWORD"}`. The server should return you the whole user object in the database including the API key which you need to save for later use.
 
-Make sure to update the values in the configuration file to match your Lumen installation.
+To configure ShareX you need to get the configuration file and change its values to match your installation and user API key. An example ShareX configuration file is provided in the /examples folder: [Lumen.sxcu](examples/Lumen.sxcu). Download the file and open it with your favourite editor. Make sure to change values for `requestUrl` to match your domain and `x-api-key` with your user API key that you saved before, alongside that make sure to edit the end of `deletionUrl` field and replace `API_KEY_HERE` with your user API key
+
+## Nginx config ⚙️
+
+To use Lumen with nginx you can use configuration file provided in the /examples folder: [nginx.conf](examples/nginx.conf).
+
+Make sure to update the values in the configuration file to match your domain and Lumen installation.
+
+```nginx
+# Nginx config for lumen
+server {
+    listen 80;
+    server_name lumen.example.com; # Change lumen.example.com to your domain, should also change it in your sharex config
+
+    # redirect http to https
+    return 301 https://$host$request_uri;
+}
+
+server {
+    listen 443 ssl;
+    server_name lumen.example.com; # Change lumen.example.com to your domain
+
+    # ssl
+    ssl_certificate /etc/letsencrypt/live/lumen.example.com/fullchain.pem; # Change lumen.example.com to your domain
+    ssl_certificate_key /etc/letsencrypt/live/lumen.example.com/privkey.pem; # Change lumen.example.com to your domain
+
+    # proxy
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        include /etc/nginx/proxy_params;
+    }
+}
+```
 
 ## Benchmarks 📊
 
