@@ -1,6 +1,7 @@
 #![forbid(unsafe_code)]
 #![warn(clippy::all, clippy::pedantic)]
 
+// Import modules
 mod encryption;
 mod models;
 mod routes;
@@ -43,14 +44,14 @@ async fn main() -> Result<()> {
         warn!("Lumen is running in debug mode. This is not recommended for production use.");
     }
 
-    let storage = Storage::new("data").await?;
+    let storage = Storage::new("data").await?; // Create a new instance of the Storage struct
     let pool = SqlitePoolOptions::new()
         .connect_with(
             SqliteConnectOptions::new()
                 .filename("data/lumen.db")
                 .create_if_missing(true),
         )
-        .await?;
+        .await?; // Create a new connection pool to the SQLite database
 
     let config = ConfigCache {
         public_url: std::env::var("PUBLIC_URL").expect("PUBLIC_URL not set in environment"),
@@ -59,7 +60,7 @@ async fn main() -> Result<()> {
     info!("Running migrations...");
 
     // todo: support other databases (mysql, postgresql, etc)
-    sqlx::migrate!().run(&pool).await?;
+    sqlx::migrate!().run(&pool).await?; // Run database migrations
     let data = Data::new(AppData { pool, storage, config });
 
     let bind = std::env::var("BIND").expect("BIND not set in environment");
