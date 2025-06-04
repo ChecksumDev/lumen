@@ -18,7 +18,7 @@ actix-web = { version = "4.4.0", features = ["rustls"] }
 aes-gcm-siv = "0.11.1"
 serde = { version = "1.0.189", features = ["derive"] }
 tokio = { version = "1.33.0", features = ["full"] }
-sqlx = { version = "0.7", features = [
+sqlx = { version = "0.8", features = [
     "runtime-tokio",
     "tls-rustls",
     "sqlite",
